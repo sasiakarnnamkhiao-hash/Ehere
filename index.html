@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ta Ray - ร้านรับฝากขายและหาไอดี 🎮</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Mitr:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  /* ปรับโทนสีเป็นน้ำเงินตามธีมที่พี่ Eoy ต้องการ */
+  --primary: #2b59ff; --primary-light: #6e8fff; --primary-dark: #1a36a3;
+  --bg: #050a1f; --bg2: #0d1633; --bg3: #16224a;
+  --txt2: rgba(255,255,255,0.8); --txt3: rgba(255,255,255,0.5);
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Kanit', sans-serif;
+  background: var(--bg); color: #fff;
+  overflow-x: hidden;
+}
+
+/* Particles - ปรับเป็นโทนฟ้า/น้ำเงิน */
+#pts { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.pt { position: absolute; animation: ptUp linear infinite; opacity: 0; }
+@keyframes ptUp {
+0%   { transform: translateY(105vh); opacity: 0; }
+8%   { opacity: 0.45; }
+92%  { opacity: 0.45; }
+100% { transform: translateY(-8vh) rotate(360deg); opacity: 0; }
+}
+
+/* Topbar */
+.topbar {
+position: sticky; top: 0; z-index: 100;
+background: #08112b;
+border-bottom: 2px solid var(--primary);
+box-shadow: 0 2px 20px rgba(43,89,255,0.3);
+display: flex; align-items: center; justify-content: space-between;
+padding: 0 24px; height: 56px;
+}
+.topbar-left { display: flex; align-items: center; gap: 12px; }
+.ham {
+width: 38px; height: 38px;
+display: flex; flex-direction: column; align-items: center; justify-content: center;
+gap: 5px; cursor: pointer; padding: 5px;
+border-radius: 8px;
+border: 1.5px solid var(--primary);
+background: rgba(43,89,255,0.12);
+transition: background .2s, box-shadow .2s;
+flex-shrink: 0;
+}
+.ham:hover { background: rgba(43,89,255,0.24); box-shadow: 0 0 12px rgba(43,89,255,0.4); }
+.ham span {
+display: block; width: 18px; height: 2.5px;
+background: #fff; border-radius: 2px;
+transition: transform .3s, opacity .3s, width .3s;
+transform-origin: center;
+}
+.ham.open span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+.ham.open span:nth-child(2) { opacity: 0; width: 0; }
+.ham.open span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+.topbar-brand {
+font-family: 'Mitr', sans-serif;
+font-size: 20px; font-weight: 700;
+color: #ffffff;
+text-shadow: 0 0 16px rgba(43,89,255,0.7);
+letter-spacing: 0.5px;
+}
+.topbar-brand span { color: var(--primary-light); }
+
+.topbar-right { display: flex; gap: 8px; }
+.tb-link {
+padding: 5px 13px; border-radius: 20px; font-size: 12px; font-weight: 600;
+text-decoration: none; color: #fff;
+border: 1px solid rgba(43,89,255,0.35);
+background: rgba(43,89,255,0.1);
+transition: all .2s;
+}
+.tb-link:hover { background: rgba(43,89,255,0.22); border-color: var(--primary); box-shadow: 0 0 10px rgba(43,89,255,0.3); }
+
+/* Drawer */
+.overlay {
+position: fixed; inset: 0; z-index: 200;
+background: rgba(0,0,0,0);
+pointer-events: none;
+transition: background .3s;
+}
+.overlay.open { background: rgba(0,0,0,0.6); pointer-events: all; }
+
+.drawer {
+position: fixed; top: 0; left: 0; z-index: 201;
+width: 220px; height: 100vh;
+background: linear-gradient(180deg, #08112b, #121e42, #08112b);
+border-right: 2px solid rgba(43,89,255,0.38);
+box-shadow: 6px 0 30px rgba(0,0,0,0.5);
+display: flex; flex-direction: column; align-items: center;
+padding: 28px 0 20px;
+transform: translateX(-100%);
+transition: transform .32s cubic-bezier(.4,0,.2,1);
+}
+.drawer.open { transform: translateX(0); }
+
+.dr-av {
+width: 68px; height: 68px; border-radius: 50%;
+background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+border: 3px solid var(--primary-light);
+display: flex; align-items: center; justify-content: center;
+font-size: 28px; margin-bottom: 7px;
+box-shadow: 0 0 22px rgba(43,89,255,0.5);
+animation: glow 3s ease-in-out infinite;
+}
+@keyframes glow {
+0%,100% { box-shadow: 0 0 22px rgba(43,89,255,0.5); }
+50%      { box-shadow: 0 0 40px rgba(43,89,255,0.85); }
+}
+.dr-name {
+font-size: 10px; font-weight: 700; color: var(--primary-light);
+letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 20px;
+}
+.dr-nav { width: 100%; }
+.dr-a {
+display: flex; align-items: center; gap: 11px;
+padding: 12px 22px;
+color: rgba(160,187,255,0.85); font-size: 14px; font-weight: 500;
+text-decoration: none; position: relative;
+transition: color .2s, background .2s;
+}
+.dr-a:hover { color: #fff; background: rgba(43,89,255,0.1); }
+.dr-a.on {
+color: #fff;
+background: linear-gradient(90deg, rgba(43,89,255,0.18), transparent);
+}
+.dr-a.on::before {
+content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+background: var(--primary); border-radius: 0 2px 2px 0;
+}
+.dr-a .ico { font-size: 15px; width: 18px; text-align: center; }
+
+/* Page */
+.page { position: relative; z-index: 1; min-height: 100vh; }
+
+/* Hero - Theme Blue */
+.hero {
+background: linear-gradient(135deg, #050a1f 0%, #0d1633 35%, #1a36a3 70%, #2b59ff 100%);
+padding: 36px 32px 28px;
+position: relative;
+min-height: 200px;
+display: flex; align-items: flex-end; justify-content: space-between;
+}
+.hero-txt { position: relative; z-index: 2; }
+.hero-tag {
+display: inline-block;
+background: rgba(0,0,0,0.3); backdrop-filter: blur(8px);
+border: 1px solid rgba(255,255,255,0.1);
+padding: 3px 13px; border-radius: 20px;
+font-size: 11px; color: #fff; margin-bottom: 8px;
+}
+.hero-title {
+font-family: 'Mitr', sans-serif;
+font-size: 52px; font-weight: 700; line-height: 1.1;
+background: linear-gradient(135deg, #fff 0%, #b6ccff 50%, #2b59ff 100%);
+-webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+filter: drop-shadow(0 0 20px rgba(43,89,255,0.6)) drop-shadow(2px 3px 6px rgba(0,0,0,0.4));
+}
+.hero-sub { font-size: 12px; color: rgba(255,255,255,0.75); letter-spacing: 3px; margin-top: 5px; }
+.hero-deco-img { 
+  width: 100px; height: 100px; 
+  object-fit: cover; 
+  border-radius: 12px; 
+  border: 2px solid var(--primary-light);
+  box-shadow: 0 0 15px rgba(43,89,255,0.5);
+  position: relative; z-index: 2; align-self: flex-end;
+}
+
+.hero-wave {
+width: 100%; height: 32px; overflow: hidden; background: var(--bg); position: relative;
+}
+.hero-wave::before {
+content: ''; position: absolute; bottom: 0; left: 0; right: 0; top: 0;
+background: linear-gradient(135deg, #050a1f, #1a36a3, #2b59ff);
+border-radius: 0 0 50% 50% / 0 0 100% 100%;
+}
+
+/* Content */
+.content { max-width: 860px; margin: 0 auto; padding: 24px 28px 50px; }
+
+/* Scroll offset */
+[id] { scroll-margin-top: 66px; }
+
+.sh {
+display: flex; align-items: center; gap: 10px;
+background: linear-gradient(90deg, #0d1633 0%, #08112b 60%, #050a1f 100%);
+border-left: 4px solid var(--primary);
+border-radius: 0 12px 12px 0;
+padding: 11px 18px; margin-bottom: 16px;
+}
+.sh .ico { font-size: 18px; }
+.sh h2 { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: 0.3px; }
+.sh span { font-size: 12px; color: var(--primary-light); font-weight: 500; }
+
+/* Cards & Box */
+.card, .box, .rules-box, .contact-box, .port-link {
+background: linear-gradient(135deg, #0d1633, #050a1f);
+border: 1.5px solid rgba(43,89,255,0.15);
+border-radius: 14px;
+}
+.card:hover, .port-link:hover { border-color: var(--primary); box-shadow: 0 8px 28px rgba(43,89,255,0.25); }
+
+.box-label { font-size: 13px; font-weight: 700; color: var(--primary-light); margin-bottom: 12px; }
+.badge.b-n { background: rgba(43,89,255,0.11); border: 1px solid rgba(43,89,255,0.28); color: var(--primary-light); }
+
+/* Rate Tables */
+.rate-table-container { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+.rate-col { flex: 1; min-width: 140px; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; font-size: 12px; }
+.rate-item { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+/* Images */
+.rate-img { width: 100%; border-radius: 10px; margin-top: 10px; border: 1px solid var(--primary); }
+
+.warn {
+border-left: 4px solid #ffcc00; background: #1a1608;
+}
+</style>
+</head>
+<body>
+<div id="pts"></div>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="ham" id="hamBtn" onclick="toggleDrawer()">
+      <span></span><span></span><span></span>
+    </div>
+    <span class="topbar-brand">Ta<span>Ray</span> รับฝากขาย</span>
+  </div>
+  <div class="topbar-right">
+    <a class="tb-link" href="https://www.facebook.com/share/1HXq3wncat/?mibextid=wwXIfr" target="_blank">📘 Facebook</a>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" onclick="closeDrawer()"></div>
+
+<div class="drawer" id="drawer">
+  <div class="dr-av">🎮</div>
+  <div class="dr-name">Ta Ray Store</div>
+  <nav class="dr-nav">
+    <a class="dr-a on" data-target="top"><span class="ico">🏠</span><span>Home</span></a>
+    <a class="dr-a" data-target="rates"><span class="ico">💰</span><span>เรทราคา</span></a>
+    <a class="dr-a" data-target="how-to"><span class="ico">📋</span><span>วิธีสั่งซื้อ</span></a>
+    <a class="dr-a" data-target="contact"><span class="ico">💬</span><span>ติดต่อ</span></a>
+  </nav>
+</div>
+
+<div class="page" id="top">
+  <div class="hero">
+    <div class="hero-txt">
+      <div class="hero-tag">✨ บริการรับฝากขาย / หาไอดีครบวงจร</div>
+      <div class="hero-title">Ta Ray</div>
+      <div class="hero-sub">ร้าน Ta Ray รับฝากขายและบริการป้ายครบวงจร</div>
+    </div>
+    <img src="IMG_7201.jpeg" alt="Character" class="hero-deco-img">
+  </div>
+  <div class="hero-wave"></div>
+
+  <div class="content">
+    <div id="services">
+      <div class="sh"><span class="ico">🛠️</span><h2>บริการของเรา</h2><span>— ยินดีให้บริการครับ</span></div>
+      <div class="box">
+        <p style="font-size: 13px; color: var(--txt2); line-height: 1.7;">
+          ร้าน Ta Ray รับฝากขาย, รับทำป้ายฝากขาย, ป้ายเรทต่างๆ, ป้ายคิวอาร์, ปกเครดิต (ป้ายไอดียังไม่รับทำ) และรับหาไอดี
+        </p>
+      </div>
+    </div>
+
+    <div id="rates">
+      <div class="sh"><span class="ico">🖼️</span><h2>เรทราคาฝากขาย</h2><span>— TABAY (ร้านตาเรย์)</span></div>
+      <div class="box">
+        <div class="rate-table-container">
+          <div class="rate-col">
+            <div class="rate-item"><span>500 – 900</span> <span>15 B</span></div>
+            <div class="rate-item"><span>1000 – 1499</span> <span>25 B</span></div>
+            <div class="rate-item"><span>1500 – 1999</span> <span>30 B</span></div>
+            <div class="rate-item"><span>2000 – 2499</span> <span>45 B</span></div>
+            <div class="rate-item"><span>2500 – 4499</span> <span>57 B</span></div>
+            <div class="rate-item"><span>4500 – 5999</span> <span>65 B</span></div>
+            <div class="rate-item"><span>6000 – 7500</span> <span>80 B</span></div>
+            <div class="rate-item"><span>7501 – 8500</span> <span>95 B</span></div>
+          </div>
+          <div class="rate-col">
+            <div class="rate-item"><span>8501 – 9999</span> <span>145 B</span></div>
+            <div class="rate-item"><span>10,000+</span> <span>1.9%</span></div>
+            <div class="rate-item"><span>14,000+</span> <span>2.5%</span></div>
+            <div class="rate-item"><span>19,000+</span> <span>3.5%</span></div>
+            <div class="rate-item"><span>30,000+</span> <span>4.5%</span></div>
+            <div class="rate-item"><span>50,000+</span> <span>4.7%</span></div>
+            <div class="rate-item"><span>70,000+</span> <span>5%</span></div>
+            <div class="rate-item"><span>100,000</span> <span>5.5%</span></div>
+          </div>
+        </div>
+        <p class="note" style="margin-top:10px; color:#ff8080;">* หมายเหตุ: คนที่เพิ่งใช้บริการจ่ายก่อนทุกกรณี</p>
+        <img src="att.qinRJRdZk5uRPfzTV5LLWtC3_BvNc47dYtI2am68Mtc.jpeg" alt="Rate Card" class="rate-img">
+      </div>
+
+      <div class="sh"><span class="ico">🔍</span><h2>เรทราคาหาไอดี</h2><span>— บริการหาไอดีร้าน Ta Ray</span></div>
+      <div class="box">
+        <div class="rate-col">
+          <div class="rate-item"><span>1 – 900</span> <span>40 B</span></div>
+          <div class="rate-item"><span>901 – 1900</span> <span>57 B</span></div>
+          <div class="rate-item"><span>1901 – 3500</span> <span>75 B</span></div>
+          <div class="rate-item"><span>3501 – 6000</span> <span>90 B</span></div>
+          <div class="rate-item"><span>6001 – 9000</span> <span>120 B</span></div>
+          <div class="rate-item"><span>9001 – 9,999</span> <span>145 B</span></div>
+          <div class="rate-item"><span>10,000+++</span> <span>170 B</span></div>
+          <div class="rate-item"><span>15,000+++</span> <span>200 B</span></div>
+          <div class="rate-item"><span>30,000+++</span> <span>250 B</span></div>
+          <div class="rate-item"><span>50,000+++</span> <span>275 B</span></div>
+          <div class="rate-item"><span>100,000+++</span> <span>300 B</span></div>
+        </div>
+        <img src="IMG_0154.jpeg" alt="Find ID Rate" class="rate-img">
+      </div>
+    </div>
+
+    <div id="how-to">
+      <div class="sh"><span class="ico">📋</span><h2>ขั้นตอนการสั่งซื้อ</h2><span>— Ta Ray Store</span></div>
+      <div class="box">
+        <div class="steps">
+          <div class="step"><div class="sn">1</div><div class="st"><strong>ทักแชท</strong> แจ้งความต้องการ (หาไอดี / ฝากขาย / ทำป้ายเรท)</div></div>
+          <div class="step"><div class="sn">2</div><div class="st"><strong>ส่งรายละเอียด</strong> ตามบรีฟ ฟอร์ม หรือรูปภาพที่ต้องใช้ทำป้าย</div></div>
+          <div class="step"><div class="sn">3</div><div class="st"><strong>ชำระเงิน</strong> ตามเรทราคาที่ตกลง (ชำระก่อนเริ่มงาน)</div></div>
+          <div class="step"><div class="sn">4</div><div class="st"><strong>รอรับงาน</strong> และเช็คคิวผ่านหน้าเว็บได้เลยครับ</div></div>
+        </div>
+      </div>
+
+      <a class="course" style="background: linear-gradient(135deg, #102050, #1a36a3);" href="https://docs.google.com/spreadsheets/d/1-kKlNjdrTLPbQ0ogYQt7Fb-QtCoLyMmX0H57NfEOMwA/edit?usp=drivesdk" target="_blank">
+        <div class="c-emj">📑</div>
+        <div class="c-inf">
+          <div class="c-inf-t">เช็คคิวงานร้าน Ta Ray</div>
+          <div class="c-inf-d">คลิกเพื่อตรวจสอบสถานะคิวงานปัจจุบัน</div>
+        </div>
+        <div class="c-price">Link<small>Google Sheets</small></div>
+      </a>
+    </div>
+
+    <div class="box">
+      <div class="box-label">📦 สิ่งที่ต้องเตรียม (สำหรับฝากขาย)</div>
+      <div class="st" style="font-size:13px;">
+        • รูปสกิน, เครื่องประดับ, สัตว์เลี้ยง, ของในคลัง, ยอดเติม, แรงค์<br>
+        • กรอกแบบฟอร์มที่ทางร้านเตรียมไว้ให้
+      </div>
+    </div>
+
+    <div id="faq">
+      <div class="sh"><span class="ico">❓</span><h2>คำถามที่พบบ่อย</h2></div>
+      <div class="rules-box">
+        <div class="rule"><span>Q:</span><span><strong>รับงานด่วนไหมครับ?</strong><br>A: ทักมาสอบถามคิวงานก่อนได้ครับ หากคิวไม่เยอะยินดีลัดคิวให้ฟรีครับ</span></div>
+        <div class="rule"><span>Q:</span><span><strong>มีประกันหลังการขายไหม?</strong><br>A: หากเกิดข้อผิดพลาดจากทางร้าน (สะกดผิด/ตกหล่น) แก้ไขให้ฟรีทันทีครับ</span></div>
+        <div class="rule"><span>Q:</span><span><strong>ยกเลิกงานและคืนเงินได้ไหม?</strong><br>A: หากเริ่มดำเนินการไปแล้ว ไม่สามารถคืนเงินได้ในทุกกรณีครับ</span></div>
+      </div>
+    </div>
+
+    <div id="contact">
+      <div class="contact-box">
+        <div class="contact-hd"><h3>ช่องทางติดต่อ</h3></div>
+        <a class="ct-link" href="https://www.facebook.com/share/1HXq3wncat/?mibextid=wwXIfr" target="_blank">
+          <div class="ct-ico" style="background:#1877f2;">📘</div>
+          <div class="ct-inf"><div class="ct-t">Facebook : Ta Ray</div><div class="ct-u">คลิกเพื่อไปยังหน้าเฟซบุ๊ก</div></div>
+          <span class="ct-arr">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-text">✦ Ta Ray Store ✦ บริการรับฝากขายและทำป้ายครบวงจร</div>
+  </div>
+</div>
+
+<script>
+  function toggleDrawer() {
+    const isOpen = document.getElementById('drawer').classList.contains('open');
+    isOpen ? closeDrawer() : openDrawer();
+  }
+  function openDrawer() {
+    document.getElementById('drawer').classList.add('open');
+    document.getElementById('overlay').classList.add('open');
+    document.getElementById('hamBtn').classList.add('open');
+  }
+  function closeDrawer() {
+    document.getElementById('drawer').classList.remove('open');
+    document.getElementById('overlay').classList.remove('open');
+    document.getElementById('hamBtn').classList.remove('open');
+  }
+
+  document.querySelectorAll('.dr-a[data-target]').forEach(a => {
+    a.addEventListener('click', () => {
+      const id = a.dataset.target;
+      const el = document.getElementById(id);
+      if (el) {
+        const top = el.getBoundingClientRect().top + window.scrollY - 66;
+        window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+      }
+      document.querySelectorAll('.dr-a').forEach(n => n.classList.remove('on'));
+      a.classList.add('on');
+      setTimeout(closeDrawer, 120);
+    });
+  });
+
+  const P = document.getElementById('pts');
+  ['✦','★','🎮','✧','💎','☆'].forEach(e => {
+    for (let j = 0; j < 3; j++) {
+      const d = document.createElement('div');
+      d.className = 'pt';
+      d.textContent = e;
+      d.style.cssText = `left:${Math.random()*100}vw;font-size:${8+Math.random()*8}px;color:${'#2b59ff,#6e8fff,#1a36a3,#ffffff'.split(',')[Math.floor(Math.random()*4)]};animation-duration:${10+Math.random()*13}s;animation-delay:${-Math.random()*25}s;`;
+      P.appendChild(d);
+    }
+  });
+</script>
+</body>
+</html>
